@@ -12,7 +12,6 @@ AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_DEFAULT_REGION = os.getenv('AWS_DEFAULT_REGION')
 
 response = requests.get("https://eodhd.com/api/eod/MCD.US?api_token=demo&fmt=json")
-print(response)
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -51,12 +50,13 @@ def runEtl():
                 aws_access_key_id=AWS_ACCESS_KEY_ID,
                 aws_secret_access_key=AWS_SECRET_ACCESS_KEY
             )
+            for x in s3.buckets.all():
+                print(x.name)
 
             s3.Bucket('airflow-bucket-denzel').upload_file(
                     Filename="extracted.csv",
                     Key='extracted.csv'
             )
-
             log.info("CSV file created with data")
         else:
             log.info("No data check code")
